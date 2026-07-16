@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <div class="title-row"><h2>{{ row.request_code }}</h2><strong>{{ row.status }}</strong></div>
+  <table class="detail">
+    <tr><th>Phòng ban</th><td>{{ row.department }}</td><th>Người yêu cầu</th><td>{{ row.requester_name }}</td></tr>
+    <tr><th>Vật tư/Dịch vụ</th><td colspan="3">{{ row.item_name }}</td></tr>
+    <tr><th>Quy cách</th><td colspan="3">{{ row.specification or '' }}</td></tr>
+    <tr><th>Số lượng</th><td>{{ row.quantity }} {{ row.unit }}</td><th>Ngân sách</th><td>{{ "{:,.0f}".format(row.estimated_budget or 0) }} VND</td></tr>
+    <tr><th>Ưu tiên</th><td>{{ row.priority }}</td><th>Ngày cần hàng</th><td>{{ row.required_date or '' }}</td></tr>
+    <tr><th>NCC đề xuất</th><td colspan="3">{{ row.supplier_suggestion or '' }}</td></tr>
+    <tr><th>Lý do mua</th><td colspan="3">{{ row.reason }}</td></tr>
+    <tr><th>Ngày tạo</th><td>{{ row.created_at.strftime('%d/%m/%Y %H:%M') }}</td><th>Người tạo</th><td>{{ row.creator.full_name }}</td></tr>
+    <tr><th>Ý kiến sếp</th><td colspan="3">{{ row.manager_comment or '' }}</td></tr>
+    <tr><th>Người xử lý</th><td>{{ row.approver.full_name if row.approver else '' }}</td><th>Ngày xử lý</th><td>{{ row.approved_at.strftime('%d/%m/%Y %H:%M') if row.approved_at else '' }}</td></tr>
+  </table>
+
+  {% if session.get('role') == 'manager' %}
+  <form method="post" class="approval-form">
+    <label>Ý kiến phê duyệt / lý do từ chối</label>
+    <textarea name="manager_comment">{{ row.manager_comment or '' }}</textarea>
+    <div class="actions">
+      <button formaction="{{ url_for('approve_request', request_id=row.id) }}">Duyệt</button>
+      <button formaction="{{ url_for('reject_request', request_id=row.id) }}">Từ chối</button>
+      <button formaction="{{ url_for('complete_request', request_id=row.id) }}">Hoàn thành</button>
+    </div>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}

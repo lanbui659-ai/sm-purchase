@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="title-row">
+  <h2>Danh sách yêu cầu</h2>
+  <a class="button" href="{{ url_for('new_request') }}">+ Tạo yêu cầu</a>
+</div>
+<div class="table-wrap">
+<table>
+  <thead><tr>
+    <th>Mã</th><th>Ngày tạo</th><th>Phòng ban</th><th>Người yêu cầu</th>
+    <th>Nội dung</th><th>Số lượng</th><th>Ngân sách</th><th>Ưu tiên</th><th>Trạng thái</th>
+  </tr></thead>
+  <tbody>
+  {% for r in rows %}
+    <tr>
+      <td><a href="{{ url_for('request_detail', request_id=r.id) }}">{{ r.request_code }}</a></td>
+      <td>{{ r.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+      <td>{{ r.department }}</td>
+      <td>{{ r.requester_name }}</td>
+      <td>{{ r.item_name }}</td>
+      <td>{{ r.quantity }} {{ r.unit }}</td>
+      <td>{{ "{:,.0f}".format(r.estimated_budget or 0) }} VND</td>
+      <td>{{ r.priority }}</td>
+      <td>{{ r.status }}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="9">Chưa có dữ liệu.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}
