@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: sm-purchase
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    healthCheckPath: /health
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sm-purchase-db
+          property: connectionString
+      - key: MANAGER_USERNAME
+        value: sep
+      - key: MANAGER_PASSWORD
+        sync: false
+      - key: EMPLOYEE_USERNAME
+        value: nhanvien
+      - key: EMPLOYEE_PASSWORD
+        sync: false
+
+databases:
+  - name: sm-purchase-db
+    plan: free
+    databaseName: sm_purchase
+    user: sm_purchase_user
